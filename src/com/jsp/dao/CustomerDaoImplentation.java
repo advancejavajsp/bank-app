@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 import com.jsp.model.Customer;
 import com.jsp.view.CustomerDao;
@@ -37,8 +39,32 @@ public class CustomerDaoImplentation implements CustomerDao {
 	public boolean deposit(long accNo, double amount) {
 		try {
 			boolean isAccountPresent = checkAccountNumber(accNo);
-			PreparedStatement preparedStatement = connection
-					.prepareStatement("insert into transaction(deposit,time) values(?,?)");
+			if (isAccountPresent) {
+				PreparedStatement preparedStatement = connection
+						.prepareStatement("insert into transaction(deposit,time) values(?,?)");
+				preparedStatement.setDouble(1, amount);
+				preparedStatement.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now()));
+				int update = preparedStatement.executeUpdate();
+				if (update > 0) {
+					double balance = 0;
+					PreparedStatement preparedStatement2 = connection
+							.prepareStatement("update customer set balance=? where accountnumber=?");
+					PreparedStatement preparedStatement3 = connection
+							.prepareStatement("select balance from customer where accountnumber=?");
+
+					preparedStatement3.setLong(1, accNo);
+					ResultSet resultSet = preparedStatement3.executeQuery();
+					
+					if (resultSet != null) {
+						while (resultSet.next()) {
+							balance = resultSet.getDouble(1);
+						}
+						preparedStatement2.setDouble(1, amount+balance);
+						preparedStatement2.setLong(2, accNo);
+						preparedStatement2.executeUpdate();
+					}
+				}
+			}
 
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -50,7 +76,14 @@ public class CustomerDaoImplentation implements CustomerDao {
 
 	private boolean checkAccountNumber(long accNo) {
 		try {
-			PreparedStatement preparedStatement = connection.prepareStatement("select * from ");
+			PreparedStatement preparedStatement = connection
+					.prepareStatement("select * from customer where accountnumber=?");
+			preparedStatement.setLong(1, accNo);
+			ResultSet resultSet = preparedStatement.executeQuery();
+			while (resultSet.next()) {
+				return true;
+			}
+
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

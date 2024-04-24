@@ -43,17 +43,18 @@ public class Main {
 				switch(scanner.nextInt()) {//switch for user funtionalities
 				case 1:{//switch for user funtionalities 1 deposit
 					System.out.println("enter the account number ");
-					long accNo=scanner.nextInt();
+					long accNo=scanner.nextLong();
 					System.out.println("enter the amount");
 					double amount=scanner.nextDouble();
 					boolean result=customerDao.deposit(accNo,amount);
 					double balance=customerDao.checkBalance(accNo);
 					System.out.println("available balance "+balance);
-					}//switch for user funtionalities 1
-				
+				   break;	
+				}//switch for user funtionalities 1
+				      
 				case 2:{//switch for user funtionalities 1 withdraw
 					System.out.println("enter the account number ");
-					long accNo=scanner.nextInt();
+					long accNo=scanner.nextLong();
 					System.out.println("enter the amount");
 					double amount=scanner.nextDouble();
 					System.out.println("enter the pin");
@@ -64,12 +65,14 @@ public class Main {
 					}
 					double balance=customerDao.checkBalance(accNo);
 					System.out.println("available balance "+balance);
+					break;
 				}//switch for user funtionalities 1
 				case 3:{//switch for user funtionalities 3 checkbalance
 					System.out.println("enter the account number ");
 					long accNo=scanner.nextLong();
 					double balance=customerDao.checkBalance(accNo);
 					System.out.println("available balance "+balance);
+					break;
 				}//switch for user funtionalities 1
 				case 4:{//switch for user funtionalities 1
 					
